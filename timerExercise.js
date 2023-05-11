@@ -1,4 +1,5 @@
-// Credit: Mateusz Rybczonec
+// Credit: Mateusz Rybczonec, James Lyndsay
+// Modified from https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/
 
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 10;
