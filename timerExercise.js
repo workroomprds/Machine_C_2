@@ -52,6 +52,12 @@ function setUpTimer(TIME_LIMIT) {
             timerElement.classList.add(COLOR_CODES.alert.color);
         }
 
+        function setCircleDasharray(timeFraction) {
+            timerElement.setAttribute("stroke-dasharray", getCircleDashArray(timeFraction));
+        }
+
+
+
         function setupInitialTimerViewAndButtons() {
             startButton.addEventListener("click", pressStart)
             stopButton.addEventListener("click", pauseTimer)
@@ -99,17 +105,10 @@ function setUpTimer(TIME_LIMIT) {
                     switchToWarning()
                 }
             }
-
-            function setCircleDasharray() {
-                const circleDasharray = `${(
-                    calculateTimeFraction() * FULL_DASH_ARRAY
-                ).toFixed(0)} 283`;
-                console.log(circleDasharray);
-                timerElement.setAttribute("stroke-dasharray", circleDasharray);
-            }
+            
             showTimeElement.innerHTML = formatTime(timeLeft);
 
-            setCircleDasharray();
+            setCircleDasharray(calculateTimeFraction());
             setRemainingPathColor(timeLeft);
         }
 
@@ -132,7 +131,7 @@ function setUpTimer(TIME_LIMIT) {
                 showTimeElement.classList.remove("invalidFormat");
                 console.log("showing valid time")
             }
-            //console.log(e)
+
 
             if (validTime(e.target.innerText)) {
                 showValidFormat()
@@ -168,6 +167,10 @@ function setUpTimer(TIME_LIMIT) {
         return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
     }
 
+    function getCircleDashArray(timeFraction) {
+        return `${(timeFraction * FULL_DASH_ARRAY).toFixed(0)} 283`
+    }
+
     function validTime(inboundTime) {
         //console.log("validating time"+inboundTime)
         // from https://stackoverflow.com/questions/11400822/javascript-regex-validate-time
@@ -190,7 +193,7 @@ function setUpTimer(TIME_LIMIT) {
     }
 
     function doTests() {
-        console.log("doing tests")
+        //console.log("doing tests")
         assert = function () {
             //console.log(arguments)
             console.assert(...arguments)
