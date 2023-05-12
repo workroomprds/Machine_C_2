@@ -1,9 +1,4 @@
-body {
-    font-family: sans-serif;
-    display: grid;
-    height: 100vh;
-    place-items: center;
-  }
+
   
   .base-timer {
     position: relative;
@@ -46,6 +41,10 @@ body {
   .base-timer__path-remaining.red {
     color: red;
   }
+
+  .invalidFormat {
+    color: magenta;
+  }
   
   .base-timer__label {
     position: absolute;
@@ -57,9 +56,3 @@ body {
     justify-content: center;
     font-size: 48px;
   }
-  
-  
-  
-  
-  
-  Resources
