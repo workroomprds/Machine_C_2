@@ -117,16 +117,13 @@ function setUpTimer(TIME_LIMIT) {
 
 
         function startTimer() {
-            timerTick = setInterval(doEachInterval(), 900);
-
             function doEachInterval() {
-                return () => {
-                    timePassed = timePassed += 1;
-                    timeLeft = TIME_LIMIT - timePassed;
-                    updateUIwithTime(timeLeft);
-                    if (timeLeft === 0) { timerEnd(); }
-                };
+                timePassed = timePassed += 1;
+                timeLeft = TIME_LIMIT - timePassed;
+                updateUIwithTime(timeLeft);
+                if (timeLeft === 0) { timerEnd(); }
             }
+            timerTick = setInterval(doEachInterval, 900);
         }
 
         function timerEnd() {
@@ -144,31 +141,18 @@ function setUpTimer(TIME_LIMIT) {
         }
 
         function userChangedTime(e) {
-
             function changeTime(inboundTime) {
-                console.log("changing time")
                 var time_arr = inboundTime.split(":");
-                console.log(time_arr)
-                var newTime = time_arr[0] * 60 + time_arr[1]
+                var newTime = time_arr[0] * 60 + Number(time_arr[1]) // bug here if we leave out Number
                 TIME_LIMIT = newTime;
                 updateUIwithTime(newTime);
             }
-            function showInvalidFormat() {
-                changeUItoShowInvalidFormat();
-                console.log("showing invalid time")
-                console.log(timerElement)
-            }
-            function showValidFormat() {
-                changeUItoShowValidFormat();
-                console.log("showing valid time")
-            }
-
 
             if (validTime(e.target.innerText)) {
-                showValidFormat()
+                changeUItoShowValidFormat();
                 changeTime(e.target.innerText)
             } else {
-                showInvalidFormat()
+                changeUItoShowInvalidFormat();
             }
         }
 
@@ -220,7 +204,7 @@ function setUpTimer(TIME_LIMIT) {
     }
 
     function doTests() {
-        let verbose = true
+        let verbose = false
         log = function () {
             if (verbose) { console.log(...arguments) }
         }
