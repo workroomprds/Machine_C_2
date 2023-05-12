@@ -42,6 +42,16 @@ function setUpTimer(TIME_LIMIT) {
         let timerElement = document.getElementById("base-timer-path-remaining")
         let showTimeElement = document.getElementById("base-timer-label")
 
+        function switchToWarning() {
+            timerElement.classList.remove(COLOR_CODES.info.color);
+            timerElement.classList.add(COLOR_CODES.warning.color);
+        }
+
+        function switchToAlert() {
+            timerElement.classList.remove(COLOR_CODES.warning.color);
+            timerElement.classList.add(COLOR_CODES.alert.color);
+        }
+
         function setupInitialTimerViewAndButtons() {
             startButton.addEventListener("click", pressStart)
             stopButton.addEventListener("click", pauseTimer)
@@ -66,6 +76,41 @@ function setUpTimer(TIME_LIMIT) {
             showTimeElement.contentEditable = true;
             startButton.disabled = false;
             onTimesUp();
+        }
+
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timePassed = timePassed += 1;
+                timeLeft = TIME_LIMIT - timePassed;
+                drawTime(timeLeft);
+
+                if (timeLeft === 0) {
+                    onTimesUp();
+                }
+            }, 900);
+        }
+
+        function drawTime(timeLeft) {
+            function setRemainingPathColor(timeLeft) {
+                if (timeLeft <= COLOR_CODES.alert.threshold) {
+                    switchToAlert()
+                } else if (timeLeft <= COLOR_CODES.warning.threshold) {
+                    switchToWarning()
+                }
+            }
+
+            function setCircleDasharray() {
+                const circleDasharray = `${(
+                    calculateTimeFraction() * FULL_DASH_ARRAY
+                ).toFixed(0)} 283`;
+                console.log(circleDasharray);
+                timerElement.setAttribute("stroke-dasharray", circleDasharray);
+            }
+            showTimeElement.innerHTML = formatTime(timeLeft);
+
+            setCircleDasharray();
+            setRemainingPathColor(timeLeft);
         }
 
         function userChangedTime(e) {
@@ -93,7 +138,7 @@ function setUpTimer(TIME_LIMIT) {
                 console.log("changing time")
                 var time_arr = inboundTime.split(":");
                 console.log(time_arr)
-                var newTime = time_arr[0]*60 + time_arr[1]
+                var newTime = time_arr[0] * 60 + time_arr[1]
                 TIME_LIMIT = newTime;
                 drawTime(newTime);
             }
@@ -124,55 +169,8 @@ function setUpTimer(TIME_LIMIT) {
         clearInterval(timerInterval);
     }
 
-    function drawTime(timeLeft) {
-        function setRemainingPathColor(timeLeft) {
-            const { alert, warning, info } = COLOR_CODES;
-            if (timeLeft <= alert.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(warning.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(alert.color);
-            } else if (timeLeft <= warning.threshold) {
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.remove(info.color);
-                document
-                    .getElementById("base-timer-path-remaining")
-                    .classList.add(warning.color);
-            }
-        }
-        
-        function setCircleDasharray() {
-            const circleDasharray = `${(
-                calculateTimeFraction() * FULL_DASH_ARRAY
-            ).toFixed(0)} 283`;
-            console.log(circleDasharray);
-            document
-                .getElementById("base-timer-path-remaining")
-                .setAttribute("stroke-dasharray", circleDasharray);
-        }        document.getElementById("base-timer-label").innerHTML = formatTime(
-            timeLeft
-        );
 
-        
-        setCircleDasharray();
-        setRemainingPathColor(timeLeft);
-    }
 
-    function startTimer() {
-
-        timerInterval = setInterval(() => {
-            timePassed = timePassed += 1;
-            timeLeft = TIME_LIMIT - timePassed;
-            drawTime(timeLeft);
-
-            if (timeLeft === 0) {
-                onTimesUp();
-            }
-        }, 900);
-    }
 
     function formatTime(time) {
         const minutes = Math.floor(time / 60);
