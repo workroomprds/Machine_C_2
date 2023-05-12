@@ -56,6 +56,11 @@ function setUpTimer(TIME_LIMIT) {
             timerElement.setAttribute("stroke-dasharray", getCircleDashArray(timeFraction));
         }
 
+        function showTime(myTimeLeft) {
+            showTimeElement.innerHTML = formatTime(myTimeLeft);
+        }
+
+
 
 
         function setupInitialTimerViewAndButtons() {
@@ -97,19 +102,14 @@ function setUpTimer(TIME_LIMIT) {
             }, 900);
         }
 
-        function drawTime(timeLeft) {
-            function setRemainingPathColor(timeLeft) {
-                if (timeLeft <= COLOR_CODES.alert.threshold) {
-                    switchToAlert()
-                } else if (timeLeft <= COLOR_CODES.warning.threshold) {
-                    switchToWarning()
-                }
+        function drawTime(myTimeLeft) {
+            showTime(myTimeLeft)
+            setCircleDasharray(calculateTimeFraction(myTimeLeft));
+            if (myTimeLeft <= COLOR_CODES.alert.threshold) {
+                switchToAlert()
+            } else if (myTimeLeft <= COLOR_CODES.warning.threshold) {
+                switchToWarning()
             }
-            
-            showTimeElement.innerHTML = formatTime(timeLeft);
-
-            setCircleDasharray(calculateTimeFraction());
-            setRemainingPathColor(timeLeft);
         }
 
         function userChangedTime(e) {
@@ -162,8 +162,8 @@ function setUpTimer(TIME_LIMIT) {
         return `${minutes}:${seconds}`;
     }
 
-    function calculateTimeFraction() {
-        const rawTimeFraction = timeLeft / TIME_LIMIT;
+    function calculateTimeFraction(myTimeLeft) {
+        const rawTimeFraction = myTimeLeft / TIME_LIMIT;
         return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
     }
 
