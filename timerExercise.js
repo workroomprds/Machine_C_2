@@ -109,31 +109,12 @@ function setUpTimer(TIME_LIMIT) {
             }
             showTimeElement.innerHTML = formatTime(timeLeft);
 
-            setCircleDasharray();
+            setCircleDasharray( );
             setRemainingPathColor(timeLeft);
         }
 
         function userChangedTime(e) {
-            function validTime(inboundTime) {
-                //console.log("validating time"+inboundTime)
-                // from https://stackoverflow.com/questions/11400822/javascript-regex-validate-time
-                // use this function to  validate time in HH:mm formate
-                var a = true;
-                var time_arr = inboundTime.split(":");
-                if (time_arr.length != 2) {
-                    a = false;
-                } else {
-                    if (isNaN(time_arr[0]) || isNaN(time_arr[1])) {
-                        a = false;
-                    }
-                    if (time_arr[0] < 24 && time_arr[1] < 60) {
 
-                    } else {
-                        a = false;
-                    }
-                }
-                return a;
-            }
             function changeTime(inboundTime) {
                 console.log("changing time")
                 var time_arr = inboundTime.split(":");
@@ -151,7 +132,8 @@ function setUpTimer(TIME_LIMIT) {
                 showTimeElement.classList.remove("invalidFormat");
                 console.log("showing valid time")
             }
-            console.log(e)
+            //console.log(e)
+
             if (validTime(e.target.innerText)) {
                 showValidFormat()
                 changeTime(e.target.innerText)
@@ -169,9 +151,6 @@ function setUpTimer(TIME_LIMIT) {
         clearInterval(timerInterval);
     }
 
-
-
-
     function formatTime(time) {
         const minutes = Math.floor(time / 60);
         let seconds = time % 60;
@@ -183,13 +162,31 @@ function setUpTimer(TIME_LIMIT) {
         return `${minutes}:${seconds}`;
     }
 
-
-
     function calculateTimeFraction() {
         const rawTimeFraction = timeLeft / TIME_LIMIT;
         return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
     }
 
+    function validTime(inboundTime) {
+        //console.log("validating time"+inboundTime)
+        // from https://stackoverflow.com/questions/11400822/javascript-regex-validate-time
+        // use this function to  validate time in HH:mm formate
+        var a = true;
+        var time_arr = inboundTime.split(":");
+        if (time_arr.length != 2) {
+            a = false;
+        } else {
+            if (isNaN(time_arr[0]) || isNaN(time_arr[1])) {
+                a = false;
+            }
+            if (time_arr[0] < 24 && time_arr[1] < 60) {
+
+            } else {
+                a = false;
+            }
+        }
+        return a;
+    }
 
 }
 
