@@ -5,7 +5,20 @@
 // thresholds not re-calculated on change
 // ? how does s->s animation work
 // seems to run slightly longer than circle
-//      does it start at start, or start +1 
+//      does it start at start, or start +1
+//  if timer expires, can't edit time (until second button pressed)
+//  after expiry, tomer can report invlid numbers, -ve values etc
+//  if changing time to > current time, fraction eill be maintined
+//  some animation (dashed line within second) is not under control
+//  button step - should it be stop?
+//  button step is referred to as pause or as stop in the code - intent?
+//      timer will appear to stop later than button press / start later than button press
+//  tests
+//      one failing one is commented out
+//      one checks for 1.03 when it says it's looking for 01.03
+//      are teh choices for data good?
+//      what isn't tested?
+
 
 
 function setUpTimer(TIME_LIMIT) {
@@ -32,7 +45,6 @@ function setUpTimer(TIME_LIMIT) {
     let timePassed = 0;
     let timeLeft = TIME_LIMIT;
     let timerInterval = null;
-    let remainingPathColor = COLOR_CODES.info.color;
 
     setupMachine();
 
@@ -60,32 +72,45 @@ function setUpTimer(TIME_LIMIT) {
             showTimeElement.innerHTML = formatTime(myTimeLeft);
         }
 
-
-
-
-        function setupInitialTimerViewAndButtons() {
+        function setupButtons() {
             startButton.addEventListener("click", pressStart)
             stopButton.addEventListener("click", pauseTimer)
-
-            drawTime(TIME_LIMIT); // LEAVE OUT FOR BUG
-            timerElement.classList.add(remainingPathColor);
         }
-
-        setupInitialTimerViewAndButtons()
-
-        let eventStuf = ["input", "paste"]; //"focus", "blur", "keyup", for bugs...
-
-        eventStuf.forEach((eventType) => { showTimeElement.addEventListener(eventType, userChangedTime); })
-
-        function pressStart(e) {
+        function setupTimerColour() {
+            timerElement.classList.add(COLOR_CODES.info.color);
+        }
+        function setupInputField() {
+            let inputFieldEvents = ["input", "paste"]; //"focus", "blur", "keyup", for bugs...
+            inputFieldEvents.forEach((eventType) => { showTimeElement.addEventListener(eventType, userChangedTime); })
+        }
+        function changeUIforRunning() {
             showTimeElement.contentEditable = false;
             startButton.disabled = true;
+        }
+        function changeUIforStopped() {
+            showTimeElement.contentEditable = true;
+            startButton.disabled = false;
+        }
+        function changeUItoShowValidFormat() {
+            showTimeElement.classList.remove("invalidFormat");
+        }
+        function changeUItoShowInvalidFormat() {
+            showTimeElement.classList.add("invalidFormat");
+        }
+
+
+        setupButtons()
+        setupTimerColour()
+        setupInputField()
+        drawTime(TIME_LIMIT); // LEAVE OUT FOR BUG
+
+        function pressStart(e) {
+            changeUIforRunning();
             startTimer();
         }
 
         function pauseTimer(e) {
-            showTimeElement.contentEditable = true;
-            startButton.disabled = false;
+            changeUIforStopped();
             onTimesUp();
         }
 
@@ -123,12 +148,12 @@ function setUpTimer(TIME_LIMIT) {
                 drawTime(newTime);
             }
             function showInvalidFormat() {
-                showTimeElement.classList.add("invalidFormat");
+changeUItoShowInvalidFormat();
                 console.log("showing invalid time")
                 console.log(timerElement)
             }
             function showValidFormat() {
-                showTimeElement.classList.remove("invalidFormat");
+                changeUItoShowValidFormat();
                 console.log("showing valid time")
             }
 
@@ -194,18 +219,18 @@ function setUpTimer(TIME_LIMIT) {
 
     function doTests() {
         let verbose = true
-        log = function() {
-            if (verbose) {console.log(...arguments)}
+        log = function () {
+            if (verbose) { console.log(...arguments) }
         }
         assert = function () {
             log(...arguments)
             console.assert(...arguments)
         }
         assertTrue = function () {
-            assert(arguments[0],...arguments)
+            assert(arguments[0], ...arguments)
         }
         assertFalse = function () {
-            assert(!arguments[0],...arguments)
+            assert(!arguments[0], ...arguments)
         }
 
         function tryTestReporter() { // unused on purpose
@@ -221,7 +246,7 @@ function setUpTimer(TIME_LIMIT) {
             var examplesOfValidTimes = [
                 "00:10", "10:20"
             ]
-            
+
             var examplesOfInvalidTimes = [
                 "", "a", "-1", "0:111", "111:00", "00:70"
             ]
