@@ -193,25 +193,30 @@ function setUpTimer(TIME_LIMIT) {
     }
 
     function doTests() {
-        //console.log("doing tests")
+        let verbose = true
+        log = function() {
+            if (verbose) {console.log(...arguments)}
+        }
         assert = function () {
-            //console.log(arguments)
+            log(...arguments)
             console.assert(...arguments)
         }
         assertTrue = function () {
-            //console.log(arguments)
-            console.assert(arguments[0],...arguments)
+            assert(arguments[0],...arguments)
         }
         assertFalse = function () {
-            //console.log(arguments)
-            console.assert(!arguments[0],...arguments)
+            assert(!arguments[0],...arguments)
         }
-        assert(true, "should not show this message");
-        assertTrue(true, "should not show this message");
-        assertFalse(false, "should not show this message")
-        //assert(false, "should show this message", "...concatenated with this");
+
+        function tryTestReporter() { // unused on purpose
+            assert(true, "should not show this message");
+            assertTrue(true, "should not show this message");
+            assertFalse(false, "should not show this message")
+            //assert(false, "should show this message", "...concatenated with this");
+        }
 
         function testValidTime() {
+            log("testing validTime")
             var subject = validTime;
             var examplesOfValidTimes = [
                 "00:10", "10:20"
@@ -233,7 +238,28 @@ function setUpTimer(TIME_LIMIT) {
                 }
             )
         }
+        function testGetCircleDashArray() {
+            log("testing getCircleDashArray")
+            let subject = getCircleDashArray;
+            assertTrue(subject(1) === "283 283", "full-scale should report 283 283, and reports: ", subject(1))
+            assertTrue(subject(0) === "0 283", "full-scale should report 0 283, and reports: ", subject(0))
+        }
+        function testCalculateTimeFraction() {
+            log("testing calculateTimeFraction")
+            let subject = calculateTimeFraction
+            //assertTrue(subject(0) === 0, "check 0 at end. reported: ", subject(0)) //FAILS
+            assertTrue(subject(TIME_LIMIT) === 1, "check 1 at start. reported: ", subject(TIME_LIMIT))
+        }
+        function testFormatTime() {
+            log("testing formatTime");
+            let subject = formatTime;
+            assertTrue(subject(63) === "1:03", "check just over a min in secs returns 0-padded. Expected 63 to be 01:03, reported ", subject(63)) // broken test left in...
+        }
+        log("doing tests")
         testValidTime();
+        testGetCircleDashArray();
+        testCalculateTimeFraction();
+        testFormatTime();
     }
 
     doTests()
