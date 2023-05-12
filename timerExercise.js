@@ -4,6 +4,7 @@
 // Looks like validation is based on hh:mm, not mm:ss
 // thresholds not re-calculated on change
 // ? how does s->s animation work
+// runs fast
 // seems to run slightly longer than circle
 //      does it start at start, or start +1
 //  if timer expires, can't edit time (until second button pressed)
@@ -44,7 +45,7 @@ function setUpTimer(TIME_LIMIT) {
 
     let timePassed = 0;
     let timeLeft = TIME_LIMIT;
-    let timerInterval = null;
+    let timerTick = null;
 
     setupMachine();
 
@@ -64,11 +65,11 @@ function setUpTimer(TIME_LIMIT) {
             timerElement.classList.add(COLOR_CODES.alert.color);
         }
 
-        function setCircleDasharray(timeFraction) {
+        function drawArc(timeFraction) {
             timerElement.setAttribute("stroke-dasharray", getCircleDashArray(timeFraction));
         }
 
-        function showTime(myTimeLeft) {
+        function showTimeNumbers(myTimeLeft) {
             showTimeElement.innerHTML = formatTime(myTimeLeft);
         }
 
@@ -102,7 +103,7 @@ function setUpTimer(TIME_LIMIT) {
         setupButtons()
         setupTimerColour()
         setupInputField()
-        drawTime(TIME_LIMIT); // LEAVE OUT FOR BUG
+        updateUIwithTime(TIME_LIMIT); // LEAVE OUT FOR BUG
 
         function pressStart(e) {
             changeUIforRunning();
@@ -111,25 +112,30 @@ function setUpTimer(TIME_LIMIT) {
 
         function pauseTimer(e) {
             changeUIforStopped();
-            onTimesUp();
+            timerEnd();
         }
 
 
         function startTimer() {
-            timerInterval = setInterval(() => {
-                timePassed = timePassed += 1;
-                timeLeft = TIME_LIMIT - timePassed;
-                drawTime(timeLeft);
+            timerTick = setInterval(doEachInterval(), 900);
 
-                if (timeLeft === 0) {
-                    onTimesUp();
-                }
-            }, 900);
+            function doEachInterval() {
+                return () => {
+                    timePassed = timePassed += 1;
+                    timeLeft = TIME_LIMIT - timePassed;
+                    updateUIwithTime(timeLeft);
+                    if (timeLeft === 0) { timerEnd(); }
+                };
+            }
         }
 
-        function drawTime(myTimeLeft) {
-            showTime(myTimeLeft)
-            setCircleDasharray(calculateTimeFraction(myTimeLeft));
+        function timerEnd() {
+            clearInterval(timerTick);
+        }
+
+        function updateUIwithTime(myTimeLeft) {
+            showTimeNumbers(myTimeLeft)
+            drawArc(calculateTimeFraction(myTimeLeft));
             if (myTimeLeft <= COLOR_CODES.alert.threshold) {
                 switchToAlert()
             } else if (myTimeLeft <= COLOR_CODES.warning.threshold) {
@@ -145,10 +151,10 @@ function setUpTimer(TIME_LIMIT) {
                 console.log(time_arr)
                 var newTime = time_arr[0] * 60 + time_arr[1]
                 TIME_LIMIT = newTime;
-                drawTime(newTime);
+                updateUIwithTime(newTime);
             }
             function showInvalidFormat() {
-changeUItoShowInvalidFormat();
+                changeUItoShowInvalidFormat();
                 console.log("showing invalid time")
                 console.log(timerElement)
             }
@@ -171,10 +177,6 @@ changeUItoShowInvalidFormat();
 
 
 
-
-    function onTimesUp() {
-        clearInterval(timerInterval);
-    }
 
     function formatTime(time) {
         const minutes = Math.floor(time / 60);
