@@ -109,7 +109,7 @@ function setUpTimer(TIME_LIMIT) {
             }
             showTimeElement.innerHTML = formatTime(timeLeft);
 
-            setCircleDasharray( );
+            setCircleDasharray();
             setRemainingPathColor(timeLeft);
         }
 
@@ -141,6 +141,7 @@ function setUpTimer(TIME_LIMIT) {
                 showInvalidFormat()
             }
         }
+
     }
 
 
@@ -187,6 +188,52 @@ function setUpTimer(TIME_LIMIT) {
         }
         return a;
     }
+
+    function doTests() {
+        console.log("doing tests")
+        assert = function () {
+            //console.log(arguments)
+            console.assert(...arguments)
+        }
+        assertTrue = function () {
+            //console.log(arguments)
+            console.assert(arguments[0],...arguments)
+        }
+        assertFalse = function () {
+            //console.log(arguments)
+            console.assert(!arguments[0],...arguments)
+        }
+        assert(true, "should not show this message");
+        assertTrue(true, "should not show this message");
+        assertFalse(false, "should not show this message")
+        //assert(false, "should show this message", "...concatenated with this");
+
+        function testValidTime() {
+            var subject = validTime;
+            var examplesOfValidTimes = [
+                "00:10", "10:20"
+            ]
+            
+            var examplesOfInvalidTimes = [
+                "", "a", "-1", "0:111", "111:00", "00:70"
+            ]
+
+            examplesOfValidTimes.forEach(
+                (myTime) => {
+                    assertTrue((validTime(myTime)), "this should be invalid", myTime)
+                }
+            )
+
+            examplesOfInvalidTimes.forEach(
+                (myTime) => {
+                    assertFalse((validTime(myTime)), "this should be invalid", myTime)
+                }
+            )
+        }
+        testValidTime();
+    }
+
+    doTests()
 
 }
 
