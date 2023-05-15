@@ -1,14 +1,21 @@
 #countdownTimer {
     font-family: sans-serif;
-    display: grid;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
     place-items: center;
+    align-items: center;
+    --circle-size: 400px;
+    --circle-stroke-width:10px;
 }
 
 .base-timer {
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: var(--circle-size);
+    height: var(--circle-size);
+}
+
+.overlay {
+    z-index: 9;
 }
 
 .base-timer__svg {
@@ -21,16 +28,16 @@
 }
 
 .base-timer__path-elapsed {
-    stroke-width: 7px;
+    stroke-width: var(--circle-stroke-width);
     stroke: grey;
 }
 
 .base-timer__path-remaining {
-    stroke-width: 7px;
-    stroke-linecap: round;
+    stroke-width: var(--circle-stroke-width);
+    stroke-linecap: square;
     transform: rotate(90deg);
     transform-origin: center;
-    transition: 1s linear all;
+    transition: 1s linear all; /*HERE IT IS*/
     fill-rule: nonzero;
     stroke: currentColor;
 }
@@ -52,12 +59,38 @@
 }
 
 .base-timer__label {
-    position: absolute;
-    width: 300px;
-    height: 300px;
+    position: absolute; /*back on parent origin*/
+    width: var(--circle-size);
+    height: var(--circle-size);
     top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 48px;
+}
+
+.elapsed {
+    position: absolute; /*back on parent origin*/
+    width: var(--circle-size);
+    height: var(--circle-size);
+    top: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+
+.timer_buttons {
+    position:relative; 
+    padding: 20px;
+}
+
+.timer_buttons button {
+    --button-size: 100px;
+    margin: 20px;
+    height:var(--button-size);
+    width:var(--button-size);
+    border-radius: 50%;
+    border:none;
 }

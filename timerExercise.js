@@ -11,6 +11,8 @@
 //  after expiry, tomer can report invlid numbers, -ve values etc
 //  if changing time to > current time, fraction eill be maintined
 //  some animation (dashed line within second) is not under control
+//  2s timer stops at ~18%
+//  if changing time after step, can see -ve numbers in time
 //  button step - should it be stop?
 //  button step is referred to as pause or as stop in the code - intent?
 //      timer will appear to stop later than button press / start later than button press
@@ -46,6 +48,7 @@ function setUpTimer(TIME_LIMIT) {
     let timePassed = 0;
     let timeLeft = TIME_LIMIT;
     let timerTick = null;
+    let timerStart = 0;
 
     setupMachine();
 
@@ -54,6 +57,7 @@ function setUpTimer(TIME_LIMIT) {
         let stopButton = document.getElementById("stopButton")
         let timerElement = document.getElementById("base-timer-path-remaining")
         let showTimeElement = document.getElementById("base-timer-label")
+        let elapsedElement = document.getElementById("elapsed")
 
         function switchToWarning() {
             timerElement.classList.remove(COLOR_CODES.info.color);
@@ -98,6 +102,9 @@ function setUpTimer(TIME_LIMIT) {
         function changeUItoShowInvalidFormat() {
             showTimeElement.classList.add("invalidFormat");
         }
+        function showElapsed(inbound) {
+            elapsedElement.innerHTML = inbound;
+        }
 
 
         setupButtons()
@@ -121,9 +128,11 @@ function setUpTimer(TIME_LIMIT) {
                 timePassed = timePassed += 1;
                 timeLeft = TIME_LIMIT - timePassed;
                 updateUIwithTime(timeLeft);
+                showElapsed(formatTime(msToS(getMSsinceEpoch() - timerStart)))
                 if (timeLeft === 0) { timerEnd(); }
             }
             timerTick = setInterval(doEachInterval, 900);
+            timerStart = getMSsinceEpoch();
         }
 
         function timerEnd() {
@@ -150,6 +159,7 @@ function setUpTimer(TIME_LIMIT) {
 
             if (validTime(e.target.innerText)) {
                 changeUItoShowValidFormat();
+                showElapsed(formatTime(0))
                 changeTime(e.target.innerText)
             } else {
                 changeUItoShowInvalidFormat();
@@ -159,7 +169,13 @@ function setUpTimer(TIME_LIMIT) {
     }
 
 
+    function getMSsinceEpoch() {
+        return new Date().getTime();
+    }
 
+    function msToS( inbound ) {
+        return Math.floor(inbound/1000)
+    }
 
 
     function formatTime(time) {
