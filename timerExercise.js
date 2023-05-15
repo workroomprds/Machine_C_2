@@ -170,7 +170,7 @@ function setUpTimer(TIME_LIMIT) {
 
 
     function getMSsinceEpoch() {
-        return new Date().getTime();
+        return performance.now();
     }
 
     function msToS( inbound ) {
