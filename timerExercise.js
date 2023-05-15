@@ -122,6 +122,14 @@ function setUpTimer(TIME_LIMIT) {
             timerEnd();
         }
 
+        function startElapsedTimer() {
+            function doEachInterval() {
+                showElapsed(formatTime(msToS(getMSsinceEpoch() - timerStart)))
+            }
+            elapsedTimer = setInterval(doEachInterval, 1000);
+            timerStart = getMSsinceEpoch();
+        }
+
 
         function startTimer() {
             function doEachInterval() {
@@ -132,7 +140,7 @@ function setUpTimer(TIME_LIMIT) {
                 if (timeLeft === 0) { timerEnd(); }
             }
             timerTick = setInterval(doEachInterval, 900);
-            timerStart = getMSsinceEpoch();
+            startElapsedTimer();
         }
 
         function timerEnd() {
